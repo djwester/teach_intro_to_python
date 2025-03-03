@@ -18,6 +18,12 @@ images = {}
 images["tank"] = pygame.image.load("tank.png")
 images["ball"] = pygame.image.load("red-ball.png")
 
+balls = [] # [{"x": 0, "y": 0}]
+spaceTimer = 0
+
+def updateBall(ball): 
+    ball["y"] = ball["y"] - 10
+
 while True:
     pygame.time.delay(100)
 
@@ -34,6 +40,18 @@ while True:
 
     window.fill((0, 0, 0))
 
+    if keys[pygame.K_SPACE]:
+        if spaceTimer == 0:
+            spaceTimer = 10
+            balls.append({"x": rect_x, "y": rect_y-10})
+
+    if spaceTimer > 0:   
+        spaceTimer -= 1
+    
+    for ball in balls:
+        updateBall(ball)
+        window.blit(images["ball"], (ball["x"], ball["y"]))
+    
     window.blit(images["tank"], (rect_x, rect_y))
 
     pygame.display.update()
