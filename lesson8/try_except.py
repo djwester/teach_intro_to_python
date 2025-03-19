@@ -7,4 +7,7 @@ except ZeroDivisionError:
 print(y)
 
 x = "hello"
-print(x + 1)
+try:
+    print(x + 1)
+except TypeError:
+    print("You can't add a number to a string!")
