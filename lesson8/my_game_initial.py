@@ -1,4 +1,6 @@
 # mypy: ignore-errors
+import random
+
 import pygame
 
 pygame.init()
@@ -12,17 +14,12 @@ rect_w = 25
 rect_x = 0
 rect_y = HEIGHT - rect_h
 
-starting_ball_y = rect_y - rect_h
+ball_step_size = 10
 
 images = {}
 images["tank"] = pygame.image.load("tank.png")
 images["ball"] = pygame.image.load("red-ball.png")
 images["enemy"] = pygame.image.load("enemy.png")
-
-balls = []
-spaceTimer = 0
-enemy_timer = 0
-enemies = []
 
 
 class Ball:
@@ -30,22 +27,24 @@ class Ball:
         self.x = x
         self.y = y
 
-    def updateBall(self):
-        self.y = self.y - 10
+    def update(self):
+        self.y = self.y - ball_step_size
 
 
-class Enemy:
+class Enemies:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
-    def love(self):
-        return True
-
-    def update_enemy(self):
-        self.y = self.y + 10
+    def move(self):
+        self.y = self.y + ball_step_size
 
 
+balls = []
+enemies = []
+spaceTimer = 0
+enemy_rate = 30
+enemy_timer = 30
 while True:
     pygame.time.delay(100)
 
@@ -65,28 +64,31 @@ while True:
     if keys[pygame.K_SPACE]:
         if spaceTimer == 0:
             spaceTimer = 10
-            ball = Ball(rect_x, rect_y - 10)
-            balls.append(ball)
+            new_ball = Ball(rect_x, rect_y - ball_step_size)
+            balls.append(new_ball)
 
     if spaceTimer > 0:
         spaceTimer -= 1
 
-    if enemy_timer == 0:
-        enemy_timer = 30
-        enemy = Enemy(0, 0)
-        enemies.append(enemy)
+    if enemy_timer == enemy_rate:
+        x = random.randint(0, WIDTH)
+        new_enemy = Enemies(x, 0)
+        enemies.append(new_enemy)
+        enemy_timer = 0
 
-    if enemy_timer > 0:
-        enemy_timer -= 1
+    enemy_timer += 1
 
     for ball in balls:
-        ball.updateBall()
+        if ball.y < 0:
+            balls.remove(ball)
+        ball.update()
         window.blit(images["ball"], (ball.x, ball.y))
 
     for enemy in enemies:
-        enemy.update_enemy()
+        if enemy.y > HEIGHT:
+            enemies.remove(enemy)
+        enemy.move()
         window.blit(images["enemy"], (enemy.x, enemy.y))
-
     window.blit(images["tank"], (rect_x, rect_y))
 
     pygame.display.update()
