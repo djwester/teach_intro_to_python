@@ -3,21 +3,21 @@
 Exercises:
 
 1. How to replace the story?
-2. How load the story and from a file?
-3. How to add additional parts of speech?
+2. How to load the story from a file?
 """
-
+import random
 # The quick brown fox jumps over the lazy dog.
 template = 'The |adjective| |adjective| |noun| |verb| over the |adjective| |noun|. '
 
+# The cow jumped over the moon
+template = 'The |noun| |verb| '
 chunks = []
 
 for chunk in template.split('|'):
     if chunk.endswith(' '):
         chunks.append(chunk)
     else:
-        prompt = 'Enter [{}]: '.format(chunk)
-        word = input(prompt)
+        word = input(f"Enter an [{chunk}] ")
         chunks.append(word)
         
 
