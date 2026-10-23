@@ -26,18 +26,30 @@ class Ball:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        dimensions = images["ball"].get_rect()
+        self.width = dimensions.width
+        self.height = dimensions.height
 
     def update(self):
         self.y = self.y - ball_step_size
+
+    def get_rect(self):
+        return pygame.Rect(self.x, self.y, self.width, self.height)
 
 
 class Enemies:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        dimensions = images["enemy"].get_rect()
+        self.width = dimensions.width
+        self.height = dimensions.height
 
-    def move(self):
+    def update(self):
         self.y = self.y + ball_step_size
+
+    def get_rect(self):
+        return pygame.Rect(self.x, self.y, self.width, self.height)
 
 
 balls = []
@@ -78,17 +90,22 @@ while True:
 
     enemy_timer += 1
 
+    ball_recs = []
     for ball in balls:
         if ball.y < 0:
             balls.remove(ball)
         ball.update()
+        ball_recs.append(ball.get_rect())
         window.blit(images["ball"], (ball.x, ball.y))
 
     for enemy in enemies:
         if enemy.y > HEIGHT:
             enemies.remove(enemy)
-        enemy.move()
+        if enemy.get_rect().collidelist(ball_recs) != -1:
+            enemies.remove(enemy)
+        enemy.update()
         window.blit(images["enemy"], (enemy.x, enemy.y))
+
     window.blit(images["tank"], (rect_x, rect_y))
 
     pygame.display.update()
